@@ -1,10 +1,12 @@
 import type { NormalizedBrandContext } from "@/modules/prompt-entheos/types/brand";
+import type { PromptContextPack } from "@/modules/prompt-entheos/types/intelligence";
 import type { SupportedTask } from "@/modules/prompt-entheos/types/task";
 
 export interface PromptInput {
   rawPrompt: string;
   context?: string;
   brandContext?: NormalizedBrandContext;
+  promptContextPack?: PromptContextPack;
   provider?: string;
   providerId?: string;
   targetHint?: string;

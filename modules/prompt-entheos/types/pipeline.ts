@@ -1,4 +1,5 @@
 import type { NormalizedBrandContext } from "@/modules/prompt-entheos/types/brand";
+import type { PromptContextPack } from "@/modules/prompt-entheos/types/intelligence";
 import type { ProviderResolution } from "@/modules/prompt-entheos/resolver/provider-resolver";
 import type { OptimizedPrompt, PromptAnalysis, PromptInput } from "@/modules/prompt-entheos/types/prompt";
 import type { ProviderMetadata } from "@/modules/prompt-entheos/types/provider";
@@ -13,6 +14,7 @@ export interface NormalizedPromptInput {
   rawPrompt: string;
   context?: string;
   brandContext?: NormalizedBrandContext;
+  promptContextPack?: PromptContextPack;
   provider?: string;
   targetHint?: string;
   task?: SupportedTask;

@@ -40,7 +40,7 @@ export const midjourneyAgent = createPromptAgent({
 
     const descriptors = [
       cleanedPrompt,
-      ...helpers.getBrandDescriptors(input.brandContext),
+      ...helpers.getBrandDescriptors(input.brandContext, input.promptContextPack),
       "clear focal subject",
       "layered composition",
       "cinematic lighting",

@@ -31,7 +31,7 @@ export const geminiAgent = createPromptAgent({
       },
       {
         label: "Brand context",
-        content: helpers.getBrandContextLines(input.brandContext),
+        content: helpers.getBrandContextLines(input.brandContext, input.promptContextPack),
       },
       {
         label: "Required response",

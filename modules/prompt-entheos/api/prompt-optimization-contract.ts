@@ -8,6 +8,9 @@ export interface PromptOptimizationRequest {
   rawPrompt: string;
   context?: string;
   brandId?: string;
+  brandProfileId?: string;
+  parentRunId?: string;
+  refinementType?: string;
 }
 
 export interface PromptOptimizationProviderOption {
@@ -34,6 +37,7 @@ export interface PromptOptimizationMetadataResponse {
 
 export interface PromptOptimizationSuccessResponse {
   ok: true;
+  runId?: string;
   optimizedPrompt: string;
   rationale: {
     summary: string;

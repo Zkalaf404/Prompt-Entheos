@@ -9,6 +9,10 @@ import type {
 } from "@/modules/prompt-entheos/api/prompt-optimization-contract";
 import { getBrandById, normalizeBrandContext } from "@/modules/prompt-entheos/brands";
 import { NotFoundError } from "@/modules/prompt-entheos/data/service-errors";
+import {
+  getBrandIntelligenceProfileById,
+  toNormalizedBrandContextFromProfile,
+} from "@/modules/prompt-entheos/intelligence";
 import { runPromptPipeline } from "@/modules/prompt-entheos/pipeline";
 import { listProviders } from "@/modules/prompt-entheos/providers";
 import { createRun } from "@/modules/prompt-entheos/runs";
@@ -67,8 +71,38 @@ export async function POST(request: Request) {
   try {
     const body = (await request.json()) as Partial<PromptOptimizationRequest>;
     let brandContext = undefined;
+    let promptContextPack = undefined;
+    let brandProfile = undefined;
 
-    if (typeof body.brandId === "string" && body.brandId.trim()) {
+    if (typeof body.brandProfileId === "string" && body.brandProfileId.trim()) {
+      try {
+        brandProfile = await getBrandIntelligenceProfileById(body.brandProfileId);
+        brandContext = toNormalizedBrandContextFromProfile(brandProfile);
+        promptContextPack = brandProfile.promptContextPack;
+      } catch (error) {
+        if (error instanceof NotFoundError) {
+          const response: PromptOptimizationErrorResponse = {
+            ok: false,
+            error: {
+              code: "INVALID_BRAND",
+              message: `The selected Brand Intelligence profile "${body.brandProfileId}" could not be found.`,
+            },
+            suggestions: {
+              providers: [],
+              tasks: [],
+            },
+          };
+
+          return NextResponse.json<PromptOptimizationResponse>(response, {
+            status: getStatusCode(response.error.code),
+          });
+        }
+
+        throw error;
+      }
+    }
+
+    if (!brandContext && typeof body.brandId === "string" && body.brandId.trim()) {
       try {
         const brand = await getBrandById(body.brandId);
         brandContext = normalizeBrandContext(brand);
@@ -101,6 +135,7 @@ export async function POST(request: Request) {
       rawPrompt: typeof body.rawPrompt === "string" ? body.rawPrompt : "",
       context: typeof body.context === "string" ? body.context : undefined,
       brandContext,
+      promptContextPack,
     } as const;
     const result = runPromptPipeline(pipelineInput);
 
@@ -119,14 +154,19 @@ export async function POST(request: Request) {
       });
     }
 
-    await createRun({
+    const savedRun = await createRun({
       input: pipelineInput,
       result,
       brandId: typeof body.brandId === "string" ? body.brandId : undefined,
+      brandProfile,
+      parentRunId: typeof body.parentRunId === "string" ? body.parentRunId : undefined,
+      refinementType:
+        typeof body.refinementType === "string" ? body.refinementType : undefined,
     });
 
     const response: PromptOptimizationResponse = {
       ok: true,
+      runId: savedRun.id,
       optimizedPrompt: result.output.prompt,
       rationale: result.output.explanation,
       score: result.output.score,

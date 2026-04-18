@@ -1,4 +1,5 @@
 import type { NormalizedBrandContext } from "@/modules/prompt-entheos/types/brand";
+import type { PromptContextPack } from "@/modules/prompt-entheos/types/intelligence";
 import { scorePromptForProvider } from "@/modules/prompt-entheos/scoring/heuristics";
 import { getTaskById } from "@/modules/prompt-entheos/tasks/registry";
 import type { PromptAgent, PromptAgentInput } from "@/modules/prompt-entheos/types/agent";
@@ -24,8 +25,14 @@ export interface PromptAgentHelpers {
     sections: string[],
     reasons: string[],
   ): OptimizedPrompt;
-  getBrandContextLines(brandContext?: NormalizedBrandContext): string[];
-  getBrandDescriptors(brandContext?: NormalizedBrandContext): string[];
+  getBrandContextLines(
+    brandContext?: NormalizedBrandContext,
+    promptContextPack?: PromptContextPack,
+  ): string[];
+  getBrandDescriptors(
+    brandContext?: NormalizedBrandContext,
+    promptContextPack?: PromptContextPack,
+  ): string[];
   getTaskLabel(task: SupportedTask): string;
   normalizeText(value: string): string;
 }
@@ -147,29 +154,30 @@ function buildExplanation(providerName: string, reasons: string[]): Optimization
 
 function getBrandContextLines(
   brandContext?: NormalizedBrandContext,
+  promptContextPack?: PromptContextPack,
 ): string[] {
-  if (!brandContext) {
-    return [];
-  }
+  const lines = [
+    ...(promptContextPack?.contextLines ?? []),
+    ...(brandContext?.contextLines ?? []),
+  ];
 
-  return [...brandContext.contextLines];
+  return [...new Set(lines.map(normalizeText).filter(Boolean))];
 }
 
 function getBrandDescriptors(
   brandContext?: NormalizedBrandContext,
+  promptContextPack?: PromptContextPack,
 ): string[] {
-  if (!brandContext) {
-    return [];
-  }
+  const descriptors = [
+    ...(promptContextPack?.brandDescriptors ?? []),
+    ...(promptContextPack?.audienceDescriptors ?? []),
+    brandContext ? `${brandContext.name} brand direction` : null,
+    brandContext ? `${brandContext.tone} tone` : null,
+    brandContext ? `appeals to ${brandContext.audience}` : null,
+    brandContext?.description,
+  ];
 
-  return [
-    `${brandContext.name} brand direction`,
-    `${brandContext.tone} tone`,
-    `appeals to ${brandContext.audience}`,
-    brandContext.description,
-  ]
-    .map(normalizeText)
-    .filter(Boolean);
+  return [...new Set(descriptors.map((value) => normalizeText(value ?? "")).filter(Boolean))];
 }
 
 function suggestImprovements(

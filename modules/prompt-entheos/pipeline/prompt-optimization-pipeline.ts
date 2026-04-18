@@ -126,6 +126,7 @@ export function runPromptPipeline(rawInput: PromptPipelineInput): PromptPipeline
       : input.rawPrompt,
     task: task.id,
     brandContext: input.brandContext,
+    promptContextPack: input.promptContextPack,
     language: input.language,
     constraints: input.constraints,
   } as const;

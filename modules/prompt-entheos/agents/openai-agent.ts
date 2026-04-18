@@ -35,7 +35,7 @@ export const openAIAgent = createPromptAgent({
       },
       {
         label: "Brand context",
-        content: helpers.getBrandContextLines(input.brandContext),
+        content: helpers.getBrandContextLines(input.brandContext, input.promptContextPack),
       },
       {
         label: "Constraints",

@@ -16,7 +16,10 @@ export const anthropicAgent = createPromptAgent({
           "Be thoughtful and well-structured.",
           "State assumptions only when they materially help.",
         ];
-    const brandContextLines = helpers.getBrandContextLines(input.brandContext);
+    const brandContextLines = helpers.getBrandContextLines(
+      input.brandContext,
+      input.promptContextPack,
+    );
 
     const prompt = [
       "<role>",

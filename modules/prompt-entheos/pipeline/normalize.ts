@@ -41,6 +41,7 @@ export function normalizePromptInput(input: PromptPipelineInput): NormalizedProm
     rawPrompt: normalizeWhitespace(input.rawPrompt),
     context: input.context ? normalizeWhitespace(input.context) : undefined,
     brandContext: input.brandContext,
+    promptContextPack: input.promptContextPack,
     provider: normalizeProvider(input),
     targetHint: input.targetHint ? normalizeWhitespace(input.targetHint) : undefined,
     task: normalizeTask(input.task ?? input.requestedTask),

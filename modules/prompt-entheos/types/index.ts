@@ -1,5 +1,6 @@
 export * from "@/modules/prompt-entheos/types/agent";
 export * from "@/modules/prompt-entheos/types/brand";
+export * from "@/modules/prompt-entheos/types/intelligence";
 export * from "@/modules/prompt-entheos/types/knowledge";
 export * from "@/modules/prompt-entheos/types/pipeline";
 export * from "@/modules/prompt-entheos/types/prompt";

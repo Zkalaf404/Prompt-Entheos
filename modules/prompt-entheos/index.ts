@@ -2,6 +2,7 @@ export * from "@/modules/prompt-entheos/agents";
 export * from "@/modules/prompt-entheos/knowledge";
 export * from "@/modules/prompt-entheos/pipeline";
 export * from "@/modules/prompt-entheos/brands";
+export * from "@/modules/prompt-entheos/intelligence";
 export * from "@/modules/prompt-entheos/providers";
 export * from "@/modules/prompt-entheos/resolver";
 export * from "@/modules/prompt-entheos/runs";
